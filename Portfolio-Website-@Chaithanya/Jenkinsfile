@@ -11,14 +11,16 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/Chaithu-dot/Chaithanya-Portfolio.git'
+                git url: 'https://github.com/Chaithu-dot/Chaithanya-Portfolio.git'
             }
         }
 
         stage('Deploy Lambda: Contact Form') {
             steps {
                 sh '''
-                zip -j contact.zip lambda/contact/lambda_function.py
+                cd lambda/contact
+                zip -r ../../contact.zip lambda_function.py
+                cd ../../
                 aws lambda update-function-code \
                     --function-name $LAMBDA_CONTACT \
                     --zip-file fileb://contact.zip \
@@ -30,7 +32,9 @@ pipeline {
          stage('Deploy Lambda: Visitor Logger') {
             steps {
                 sh '''
-                zip -j visitor.zip lambda/track/lambda_function.py
+                cd lambda/track
+                zip -r ../../visitor.zip lambda_function.py
+                cd ../../
                 aws lambda update-function-code \
                     --function-name $LAMBDA_VISITOR \
                     --zip-file fileb://visitor.zip \
@@ -42,7 +46,11 @@ pipeline {
         stage('Upload Frontend to S3') {
             steps {
                 sh '''
-                aws s3 sync ./frontend s3://$S3_BUCKET --delete
+                aws s3 sync frontend/ s3://$S3_BUCKET --delete
+                aws cloudfront create-invalidation \
+                    --distribution-id YOUR_DISTRIBUTION_ID \
+                    --paths "/*" \
+                    --region $AWS_REGION
                 '''
             }
         }
@@ -56,4 +64,5 @@ pipeline {
             echo 'Deployment failed!'
         }
     }
-}
+  }
+     
