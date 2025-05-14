@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-         stage('Deploy Lambda: Visitor Logger') {
+        stage('Deploy Lambda: Visitor Logger') {
             steps {
                 sh '''
                 zip -j visitor.zip lambda/track/lambda_function.py
@@ -54,6 +54,6 @@ pipeline {
         }
         failure {
             echo 'Deployment failed!'
-        }
-    }
+        }
+    }
 }
