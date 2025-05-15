@@ -48,7 +48,7 @@ $(document).ready(function () {
         message: $("textarea[name='message']").val()
     };
 
-    fetch("https://5y7aaocl0a.execute-api.us-east-1.amazonaws.com/prod/contact", {
+    fetch("https://agqgd5ymnh.execute-api.us-east-1.amazonaws.com/development/contact", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -70,7 +70,7 @@ $(document).ready(function () {
 
 // tracking visitor logs
 
-fetch("https://5y7aaocl0a.execute-api.us-east-1.amazonaws.com/prod/track", {
+fetch("https://agqgd5ymnh.execute-api.us-east-1.amazonaws.com/development/track", {
     method: "POST",
     headers: {
         "Content-Type": "application/json"
