@@ -5,7 +5,7 @@ from datetime import datetime
 
 dynamodb = boto3.resource('dynamodb')
 cloudwatch = boto3.client('cloudwatch')
-table = dynamodb.Table('VisitorLogs')
+table = dynamodb.Table('ContactTracking')
 
 def lambda_handler(event, context):
     try:
@@ -24,8 +24,10 @@ def lambda_handler(event, context):
             'referrer': referrer
         }
 
+        # Save visitor data
         table.put_item(Item=item)
 
+        # Push CloudWatch metric
         cloudwatch.put_metric_data(
             Namespace='VisitorAnalytics',
             MetricData=[
@@ -46,17 +48,19 @@ def lambda_handler(event, context):
         return {
             'statusCode': 200,
             'headers': {
-                'Access-Control-Allow-Origin': '*'
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
             },
             'body': json.dumps({'message': 'Visitor logged'})
         }
 
     except Exception as e:
-        print("Error:", e)
+        print("Error:", str(e))
         return {
             'statusCode': 500,
             'headers': {
-                'Access-Control-Allow-Origin': '*'
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
             },
             'body': json.dumps({'error': str(e)})
-        }
+        }
