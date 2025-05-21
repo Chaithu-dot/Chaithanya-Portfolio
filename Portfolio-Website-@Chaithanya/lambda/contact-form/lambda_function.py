@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('ContactFormSubmissions')
+table = dynamodb.Table('ContactFormSubmission')
 
 def lambda_handler(event, context):
     try:
@@ -29,12 +29,14 @@ def lambda_handler(event, context):
         print("=== FINAL ITEM ===")
         print(json.dumps(item))
 
-           table.put_item(Item=item)
+        # Insert into DynamoDB
+        table.put_item(Item=item)
 
         return {
             'statusCode': 200,
             'headers': {
-                'Access-Control-Allow-Origin': '*'
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
             },
             'body': json.dumps({'message': 'Form submitted successfully'})
         }
@@ -45,7 +47,8 @@ def lambda_handler(event, context):
         return {
             'statusCode': 500,
             'headers': {
-                'Access-Control-Allow-Origin': '*'
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
             },
             'body': json.dumps({'error': str(e)})
-        }
+        }
